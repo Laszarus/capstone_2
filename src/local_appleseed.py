@@ -41,19 +41,15 @@ class LocalSeeds(object):
         model.add(Flatten()) # necessary to flatten before going into conventional dense layer  KEEP
         print('Model flattened out to ', model.output_shape)
 
-        # now start a typical neural network
-        model.add(Dense(32)) # (only) 32 neurons in this layer, really?   KEEP
+        # start a typical neural network
+        model.add(Dense(1))
         model.add(Activation('relu'))
 
         model.add(Dropout(0.175)) # zeros out some fraction of inputs, helps prevent overfitting
 
-        model.add(Dense(nb_classes)) # 10 final nodes (one for each class)  KEEP
-        model.add(Activation('softmax')) # softmax at end to pick between classes 0-9 KEEP
-        
-        # many optimizers available, see https://keras.io/optimizers/#usage-of-optimizers
-        # suggest you KEEP loss at 'categorical_crossentropy' for this multiclass problem,
-        # and KEEP metrics at 'accuracy'
-        # suggest limiting optimizers to one of these: 'adam', 'adadelta', 'sgd'
+        model.add(Dense(nb_classes)) # 6 final nodes (one for each class)  KEEP
+        model.add(Activation('softmax')) # softmax at end to pick between classes 0-6
+
         model.compile(loss='categorical_crossentropy',
                     optimizer='adam',
                     metrics=['accuracy'])
@@ -77,10 +73,10 @@ if __name__ == "__main__":
     print("Initializing parameters")
     batch_size = 10  # number of training samples used at a time to update the weights
     nb_classes = 6   # number of output possibilites: [0 - 9] KEEP
-    nb_epoch = 4    # number of passes through the entire train dataset before weights "final"
+    nb_epoch = 10   # number of passes through the entire train dataset before weights "final"
     img_rows, img_cols = 28, 28  # the size of the NAIP images
     input_shape = (img_rows, img_cols, 4)  # 4 channel image input (RGBA) 
-    nb_filters = 10 # number of convolutional filters to use
+    nb_filters = 8 # number of convolutional filters to use
     pool_size = (2, 2) # pooling decreases image size, reduces computation, adds translational invariance
     kernel_size = (4, 4) # convolutional kernel size, slides over image to learn features
 
@@ -90,5 +86,5 @@ if __name__ == "__main__":
     print('Fitting model')
     seeds.fit_model()
 
-    print("How'd you do?")
+    print("How'd we do?")
     seeds.evaluate_model()

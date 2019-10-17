@@ -9,7 +9,7 @@ from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 
 class AppleseedCNN(object):
-    def __init__(self, mat, sample_size=1000):
+    def __init__(self, mat, sample_size=2000):
         # .mat loads im as a dictionary
         self.mat = mat
         

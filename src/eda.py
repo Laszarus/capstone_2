@@ -4,9 +4,6 @@ import scipy.io
 from skimage import io
 from load_data import ImageData
 
-mat = scipy.io.loadmat('data/sat-6-full.mat')
-data = ImageData(mat)
-
 def class_distribution_bar_graph(y_list=data.y_train_play_cl):
     '''
     EDA tool to display number of images per class in the dataset. 
@@ -55,38 +52,42 @@ def image_classification_samples(folder='x_train_play'):
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
         plt.grid(b=None, which='both')
-        building = io.imread('data/{}/0_building/building{}.png'.format(folder,np.random.randint(0,20)))
+        building = io.imread('data/{}/0_building/building{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(building)
         fig.suptitle('building',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        barren = io.imread('data/{}/1_barren_land/barren{}.png'.format(folder,np.random.randint(0,20)))
+        barren = io.imread('data/{}/1_barren_land/barren{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(barren)
         fig.suptitle('barren',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        tree = io.imread('data/{}/2_tree/tree{}.png'.format(folder,np.random.randint(0,20)))
+        tree = io.imread('data/{}/2_tree/tree{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(tree)
         fig.suptitle('tree',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        grass = io.imread('data/{}/3_grassland/grassland{}.png'.format(folder,np.random.randint(0,20)))
+        grass = io.imread('data/{}/3_grassland/grassland{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(grass)
         fig.suptitle('grass',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        road = io.imread('data/{}/4_road/road{}.png'.format(folder,np.random.randint(0,20)))
+        road = io.imread('data/{}/4_road/road{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(road)
         fig.suptitle('road',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        water = io.imread('data/{}/5_water/water{}.png'.format(folder,np.random.randint(0,20)))
+        water = io.imread('data/{}/5_water/water{}.png'.format(folder,np.random.randint(0,40)))
         ax[i].imshow(water)
         fig.suptitle('water',x=0.03, y=.5)
     
     plt.show()
+
+if __name__ == "__main__":   
+    mat = scipy.io.loadmat('data/sat-6-full.mat')
+    data = ImageData(mat)
