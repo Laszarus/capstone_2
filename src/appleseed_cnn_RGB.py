@@ -8,7 +8,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 
-class AppleseedCNN(object):
+class AppleseedCNN_RGB(object):
     def __init__(self, mat, sample_size=2000):
         # .mat loads im as a dictionary
         self.mat = mat
@@ -21,8 +21,8 @@ class AppleseedCNN(object):
         self.ann = mat.get('annotations')
 
         # Get rid of pesky NIR layer
-        self.x_train_play = self.x_train[:,:,0:3,0:sample_size]
-        self.x_test_play = self.x_test[:,:,0:3,0:sample_size]
+        self.x_train = self.x_train[:,:,0:3,0:sample_size]
+        self.x_test = self.x_test[:,:,0:3,0:sample_size]
 
         # reshape to what Conv2D prefers
         self.x_train = self.x_train.reshape(self.x_train.shape[3], self.x_train.shape[0], 
@@ -33,9 +33,9 @@ class AppleseedCNN(object):
         self.y_test = self.y_test.T
 
         # create a locally manageable dataset
-        self.x_train_play = self.x_train[0:sample_size,:,:,:]
+        self.x_train_play = self.x_train[0:sample_size,:,:,0:3]
         self.y_train_play = self.y_train[0:sample_size,:]
-        self.x_test_play = self.x_test[0:sample_size,:,:,:]
+        self.x_test_play = self.x_test[0:sample_size,:,:,0:3]
         self.y_test_play = self.y_test[0:sample_size,:]
 
     def define_model(self, nb_filters, kernel_size, input_shape, pool_size):
@@ -102,15 +102,15 @@ if __name__ == "__main__":
 
     print('Creating class')
     mat = scipy.io.loadmat('data/sat-6-full.mat')
-    apples = AppleseedCNN(mat)
+    apples = AppleseedCNN_RGB(mat)
 
     print("Initializing parameters")
     batch_size = 10  # number of training samples used at a time to update the weights
     nb_classes = 6   # number of output possibilites: [0 - 9] KEEP
     nb_epoch = 10    # number of passes through the entire train dataset before weights "final"
     img_rows, img_cols = 28, 28  # the size of the NAIP images
-    input_shape = (img_rows, img_cols, 4)  # 3 channel image input (RGB) 
-    nb_filters = 8 # number of convolutional filters to use
+    input_shape = (img_rows, img_cols, 3)  # 3 channel image input (RGB) 
+    nb_filters = 64 # number of convolutional filters to use
     pool_size = (2, 2) # pooling decreases image size, reduces computation, adds translational invariance
     kernel_size = (4, 4) # convolutional kernel size, slides over image to learn features
 

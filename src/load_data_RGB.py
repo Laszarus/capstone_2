@@ -16,9 +16,9 @@ class ImageData(object):
         self.ann = mat.get('annotations')
 
         # create a locally manageable, RGB dataset with NO NIR layer
-        self.x_train_play = self.x_train[:,:,:,0:sample_size]
+        self.x_train_play = self.x_train[:,:,0:3,0:sample_size]
         self.y_train_play = self.y_train[:,0:sample_size]
-        self.x_test_play = self.x_test[:,:,:,0:sample_size]
+        self.x_test_play = self.x_test[:,:,0:3,0:sample_size]
         self.y_test_play = self.y_test[:,0:sample_size]
 
         # list of classifications for each array of X
@@ -66,7 +66,7 @@ class ImageData(object):
     #     self.y_test_play_cl = self.class_lister(self.y_test_play)
         
 
-    def save_png(self, folder, x_array, class_list, mode='RGBA'):
+    def save_png(self, folder, x_array, class_list, mode='RGB'):
         '''
         Inputs:
         folder = String type. Name of folder where you want images saved.
@@ -111,18 +111,18 @@ if __name__ == "__main__":
     mat = scipy.io.loadmat('data/sat-6-full.mat')
     data = ImageData(mat)
 
-    # For local training
-    folder = 'x_train_play'
-    x_array = data.x_train_play
-    class_list = data.y_train_play_cl
+    # # For local training
+    # folder = 'x_train_play'
+    # x_array = data.x_train_play
+    # class_list = data.y_train_play_cl
 
-    # # For local testing
-    # folder = 'x_test_play'
-    # x_array = data.x_test_play
-    # class_list = data.y_test_play_cl
+    # For local testing
+    folder = 'x_test_play'
+    x_array = data.x_test_play
+    class_list = data.y_test_play_cl
     
     print("Saving images...")
-    data.save_png(folder, x_array, class_list,mode='RGBA')
+    data.save_png(folder, x_array, class_list,mode='RGB')
 
     print("Done!")
 
