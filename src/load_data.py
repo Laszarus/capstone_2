@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ImageData(object):
-    def __init__(self, mat, sample_size=1000):
+    def __init__(self, mat, sample_size=2000):
         # .mat loads im as a dictionary
         self.mat = mat
 
@@ -15,10 +15,10 @@ class ImageData(object):
         self.y_test = mat.get('test_y')
         self.ann = mat.get('annotations')
 
-        # create a locally manageable dataset
-        self.x_train_play = self.x_train[:,:,:,0:sample_size]
+        # create a locally manageable, RGB dataset
+        self.x_train_play = self.x_train[:,:,0:3,0:sample_size]
         self.y_train_play = self.y_train[:,0:sample_size]
-        self.x_test_play = self.x_test[:,:,:,0:sample_size]
+        self.x_test_play = self.x_test[:,:,0:3,0:sample_size]
         self.y_test_play = self.y_test[:,0:sample_size]
 
         # list of classifications for each array of X
@@ -66,7 +66,7 @@ class ImageData(object):
     #     self.y_test_play_cl = self.class_lister(self.y_test_play)
         
 
-    def save_png(self, folder, x_array, class_list, mode='RGBA'):
+    def save_png(self, folder, x_array, class_list, mode='RGB'):
         '''
         Inputs:
         folder = String type. Name of folder where you want images saved.
@@ -122,7 +122,9 @@ if __name__ == "__main__":
     class_list = data.y_test_play_cl
     
     print("Saving images...")
-    data.save_png(folder, x_array, class_list,mode='RGBA')
+    data.save_png(folder, x_array, class_list,mode='RGB')
+
+    print("Done!")
 
 
 

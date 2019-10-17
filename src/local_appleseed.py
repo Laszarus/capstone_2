@@ -19,6 +19,10 @@ class LocalSeeds(object):
         self.x_test_play = play_data['arr_2']
         self.y_test_play = play_data['arr_3']
 
+        # .predict() doesn't like uint8
+        self.x_train_play = self.x_train_play.astype('float32') / 255. # data was uint8 [0-255]
+        self.x_test_play = self.x_test_play.astype('float32') / 255. # data was uint8 [0-255]
+
     def define_model(self, nb_filters, kernel_size, input_shape, pool_size):
         model = Sequential() # not sure what the other options are for this
 
@@ -42,7 +46,7 @@ class LocalSeeds(object):
         print('Model flattened out to ', model.output_shape)
 
         # start a typical neural network
-        model.add(Dense(1))
+        model.add(Dense(32))
         model.add(Activation('relu'))
 
         model.add(Dropout(0.175)) # zeros out some fraction of inputs, helps prevent overfitting

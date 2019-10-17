@@ -43,7 +43,7 @@ def image_classification_samples(folder='x_train_play'):
     '''
     Inputs: folder; String type. Folder name of which population you want
             to pull samples from.
-    Returns: 6x (1x6) rows displaying random sample images from each
+    Returns: 6x (1x6) plots displaying random sample images from each
              class of land cover. 
     '''
     
@@ -88,6 +88,28 @@ def image_classification_samples(folder='x_train_play'):
     
     plt.show()
 
+def create_accuracy_loss(self, figloc):
+    '''This will plot the accuracy and loss plots for the model'''
+
+    fig, ax = plt.subplots(1, 2, figsize=(12, 9))
+    ax[0].plot(self.df['accuracy'], lw=3, marker='.')
+    ax[0].plot(self.df['val_accuracy'], lw=3, marker='.')
+    ax[0].set_title('Model accuracy')
+    ax[0].set_ylabel('Accuracy')
+    ax[0].set_xlabel('Epoch')
+    ax[0].legend(['Train', 'Test'], loc='upper left')
+
+    ax[1].plot(self.df['loss'], lw=3, marker='.')
+    ax[1].plot(self.df['val_loss'], lw=3, marker='.')
+    ax[1].set_title('Model loss')
+    ax[1].set_ylabel('Loss')
+    ax[1].set_xlabel('Epoch')
+    ax[1].legend(['Train', 'Test'], loc='upper left')
+    a = self.score_accuracy
+    ls = self.score_loss
+    fig.suptitle(f'Model V{self.waldo.version} Loss:{ls} Acc:{a} (on holdout)',
+                    fontsize=18)
+    plt.savefig(figloc)
 if __name__ == "__main__":   
     mat = scipy.io.loadmat('data/sat-6-full.mat')
     data = ImageData(mat)
