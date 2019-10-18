@@ -13,7 +13,7 @@ class LocalSeeds(object):
         # load in test and train arrays saved as npz file
         self.play_data = play_data
         
-        # create a locally manageable dataset
+        # assign train and test sets from saved subsamples
         self.x_train_play = play_data['arr_0']
         self.y_train_play = play_data['arr_1']
         self.x_test_play = play_data['arr_2']
@@ -24,7 +24,7 @@ class LocalSeeds(object):
         self.x_test_play = self.x_test_play.astype('float32') / 255. # data was uint8 [0-255]
 
     def define_model(self, nb_filters, kernel_size, input_shape, pool_size):
-        model = Sequential() # not sure what the other options are for this
+        model = Sequential()
 
         # note: the convolutional layers and dense layers require an activation function
         # see https://keras.io/activations/
@@ -33,16 +33,16 @@ class LocalSeeds(object):
 
         model.add(Conv2D(nb_filters, (kernel_size[0], kernel_size[1]),
                             padding='valid', 
-                            input_shape=input_shape)) #first conv. layer  KEEP
+                            input_shape=input_shape)) #first conv. layer
         model.add(Activation('relu')) # Activation specification necessary for Conv2D and Dense layers
 
-        model.add(Conv2D(nb_filters, (kernel_size[0], kernel_size[1]), padding='valid')) #2nd conv. layer KEEP
+        model.add(Conv2D(nb_filters, (kernel_size[0], kernel_size[1]), padding='valid')) #2nd conv. layer
         model.add(Activation('relu'))
 
         model.add(MaxPooling2D(pool_size=pool_size)) # decreases size, helps prevent overfitting
         model.add(Dropout(0.5)) # zeros out some fraction of inputs, helps prevent overfitting
 
-        model.add(Flatten()) # necessary to flatten before going into conventional dense layer  KEEP
+        model.add(Flatten()) # necessary to flatten before going into conventional dense layer
         print('Model flattened out to ', model.output_shape)
 
         # start a typical neural network
@@ -51,8 +51,8 @@ class LocalSeeds(object):
 
         model.add(Dropout(0.175)) # zeros out some fraction of inputs, helps prevent overfitting
 
-        model.add(Dense(nb_classes)) # 6 final nodes (one for each class)  KEEP
-        model.add(Activation('softmax')) # softmax at end to pick between classes 0-6
+        model.add(Dense(nb_classes)) # 6 final nodes (one for each class)
+        model.add(Activation('softmax')) # softmax at end to pick between classes 0-5
 
         model.compile(loss='categorical_crossentropy',
                     optimizer='adam',
@@ -66,7 +66,7 @@ class LocalSeeds(object):
     def evaluate_model(self):
         score = self.model.evaluate(self.x_test_play, self.y_test_play, verbose=0)
         print('Test score:', score[0])
-        print('Test accuracy:', score[1]) # the important one
+        print('Test accuracy:', score[1]) 
 
 if __name__ == "__main__":
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     print("Initializing parameters")
     batch_size = 10  # number of training samples used at a time to update the weights
-    nb_classes = 6   # number of output possibilites: [0 - 9] KEEP
+    nb_classes = 6   # number of output possibilites: [0 - 5]
     nb_epoch = 10   # number of passes through the entire train dataset before weights "final"
     img_rows, img_cols = 28, 28  # the size of the NAIP images
     input_shape = (img_rows, img_cols, 4)  # 4 channel image input (RGBA) 

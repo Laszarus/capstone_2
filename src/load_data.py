@@ -15,56 +15,23 @@ class ImageData(object):
         self.y_test = mat.get('test_y')
         self.ann = mat.get('annotations')
 
-        # create a locally manageable, RGB dataset with NO NIR layer
+        # create a subsample to load images from
         self.x_train_play = self.x_train[:,:,:,0:sample_size]
         self.y_train_play = self.y_train[:,0:sample_size]
         self.x_test_play = self.x_test[:,:,:,0:sample_size]
         self.y_test_play = self.y_test[:,0:sample_size]
 
-        # list of classifications for each array of X
-        # self.y_train_cl = y_train_cl
-        # self.y_test_cl = y_test_cl
-        # self.y_train_play_cl = y_train_play_cl
-        # self.y_test_play_cl = y_test_play_cl
-
-        # y_train_cl = self.class_lister(self.y_train)
-        # y_test_cl = self.class_lister(self.y_test)
-        # y_train_play_cl = self.class_lister(self.y_train_play)
-        # y_test_play_cl = self.class_lister(self.y_test_play)
-
-        self.y_train_cl = self.class_lister(self.y_train)
-        self.y_test_cl = self.class_lister(self.y_test)
+        # use class_lister to create list of target classifications for
+        # train and test sets
         self.y_train_play_cl = self.class_lister(self.y_train_play)
         self.y_test_play_cl = self.class_lister(self.y_test_play)
 
-    def class_lister(self, y_array):
-        '''
-        Input: y_train, y_test, y_train_play, y_test_play
-        Returns: list of classifications (0-5) for each array in
-                 the corresponding x array
-        0 = building
-        1 = barren land
-        2 = trees
-        3 = grassland
-        4 = road
-        5 = water
-        '''
-
-        i = 0
-        class_list = []
-        while i < len(y_array[1]):
-            class_cat = np.where(y_array[:,i]==1)
-            class_list.append(int(class_cat[0]))
-            i+=1
-        return class_list
-    
-    # def create_class_list(self):
-    #     # list of classifications for each array of X
-    #     self.y_train_cl = self.class_lister(self.y_train)
-    #     self.y_test_cl = self.class_lister(self.y_test)
-    #     self.y_train_play_cl = self.class_lister(self.y_train_play_cl)
-    #     self.y_test_play_cl = self.class_lister(self.y_test_play)
-        
+    def save_data(self):
+        # create a local subset to load from when running model sript
+        np.savez('data/play_data', self.x_train_play, 
+                                   self.y_train_play, 
+                                   self.x_test_play, 
+                                   self.y_test_play)
 
     def save_png(self, folder, x_array, class_list, mode='RGBA'):
         '''
@@ -107,16 +74,37 @@ class ImageData(object):
                 img.save("data/{}/5_water/water{}.png".format(folder,w))
                 w+=1
 
+    def class_lister(self, y_array):
+        '''
+        Input: y_train, y_test, y_train_play, y_test_play
+        Returns: list of classifications (0-5) for each array in
+                 the corresponding x array
+        0 = building
+        1 = barren land
+        2 = trees
+        3 = grassland
+        4 = road
+        5 = water
+        '''
+
+        i = 0
+        class_list = []
+        while i < len(y_array[1]):
+            class_cat = np.where(y_array[:,i]==1)
+            class_list.append(int(class_cat[0]))
+            i+=1
+        return class_list
+
 if __name__ == "__main__":
     mat = scipy.io.loadmat('data/sat-6-full.mat')
     data = ImageData(mat)
 
-    # For local training
+    # To save local training images:
     folder = 'x_train_play'
     x_array = data.x_train_play
     class_list = data.y_train_play_cl
 
-    # # For local testing
+    # # To save local test images:
     # folder = 'x_test_play'
     # x_array = data.x_test_play
     # class_list = data.y_test_play_cl

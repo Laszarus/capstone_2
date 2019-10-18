@@ -88,6 +88,8 @@ def image_classification_samples(folder='x_train_play'):
     
     plt.show()
 
+
+'''
 def create_accuracy_loss(self, figloc):
     '''This will plot the accuracy and loss plots for the model'''
 
@@ -110,6 +112,8 @@ def create_accuracy_loss(self, figloc):
     fig.suptitle(f'Model V{self.waldo.version} Loss:{ls} Acc:{a} (on holdout)',
                     fontsize=18)
     plt.savefig(figloc)
+'''
+
 if __name__ == "__main__":   
     mat = scipy.io.loadmat('data/sat-6-full.mat')
     data = ImageData(mat)
