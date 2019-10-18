@@ -108,6 +108,9 @@ if __name__ == "__main__":
     # folder = 'x_test_play'
     # x_array = data.x_test_play
     # class_list = data.y_test_play_cl
+
+    print("Saving arrays...")
+    data.save_data()
     
     print("Saving images...")
     data.save_png(folder, x_array, class_list,mode='RGBA')

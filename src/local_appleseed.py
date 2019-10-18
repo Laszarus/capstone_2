@@ -19,6 +19,14 @@ class LocalSeeds(object):
         self.x_test_play = play_data['arr_2']
         self.y_test_play = play_data['arr_3']
 
+        # reshape to what Conv2D prefers
+        self.x_train_play = self.x_train_play.reshape(self.x_train_play.shape[3], self.x_train_play.shape[0], 
+                                            self.x_train_play.shape[1], self.x_train_play.shape[2])
+        self.x_test_play = self.x_test_play.reshape(self.x_test_play.shape[3], self.x_test_play.shape[0], 
+                                          self.x_test_play.shape[1], self.x_test_play.shape[2])
+        self.y_train_play = self.y_train_play.T
+        self.y_test_play = self.y_test_play.T
+
         # .predict() doesn't like uint8
         self.x_train_play = self.x_train_play.astype('float32') / 255. # data was uint8 [0-255]
         self.x_test_play = self.x_test_play.astype('float32') / 255. # data was uint8 [0-255]
