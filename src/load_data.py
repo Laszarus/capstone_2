@@ -4,9 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ImageData(object):
-    def __init__(self, mat, sample_size=2000):
-        # .mat loads im as a dictionary
+    def __init__(self, mat, sample_size=1000, mode='RGBA'):
+        # mode = 'RGBA' or 'RGB'
+
+        # .mat loads in as a dictionary
         self.mat = mat
+        self.mode = mode
+        self.sample_size = sample_size
+        self.test_sample_size = sample_size / 4
 
         # assign values (images) to variables
         self.x_train = mat.get('train_x')
@@ -15,35 +20,33 @@ class ImageData(object):
         self.y_test = mat.get('test_y')
         self.ann = mat.get('annotations')
 
-        # create a subsample to load images from
-        self.x_train_play = self.x_train[:,:,:,0:sample_size]
-        self.y_train_play = self.y_train[:,0:sample_size]
-        self.x_test_play = self.x_test[:,:,:,0:sample_size]
-        self.y_test_play = self.y_test[:,0:sample_size]
+        if self.mode == 'RGB':
+            # create a locally manageable, RGB dataset with NO NIR layer
+            self.x_train = self.x_train[:,:,0:3,:]
+            self.x_test = self.x_test[:,:,0:3,:]
 
         # use class_lister to create list of target classifications for
         # train and test sets
-        self.y_train_play_cl = self.class_lister(self.y_train_play)
-        self.y_test_play_cl = self.class_lister(self.y_test_play)
+        self.y_train_cl = self.class_lister(self.y_train)
+        self.y_test_cl = self.class_lister(self.y_test)
 
     def save_data(self):
-        # create a local subset to load from when running model sript
-        np.savez('data/play_data', self.x_train_play, 
-                                   self.y_train_play, 
-                                   self.x_test_play, 
-                                   self.y_test_play)
+        if self.mode == 'RGBA':
+            # create a local subset to load from when running model sript
+            np.savez('data/RGBA/rgba_data', self.x_train, 
+                                            self.y_train, 
+                                            self.x_test, 
+                                            self.y_test)
+        elif self.mode == 'RGB':
+            # create a local subset to load from when running model sript
+            np.savez('data/RGB/rgb_data', self.x_train, 
+                                           self.y_train, 
+                                           self.x_test, 
+                                           self.y_test)
 
-    def save_png(self, folder, x_array, class_list, mode='RGBA'):
-        '''
-        Inputs:
-        folder = String type. Name of folder where you want images saved.
-                 All child folders must follow naming convention in code. 
-        x_array = x_train, x_test, x_train_play, or x_test_play
-        class_list = y_train, y_test, y_train_play, or y_test_play
-
-        Returns:
-        Folders with lil images you can look at to check out the data
-        '''
+    def save_train_png(self):
+        # Saves train set folders with images you can look at to check out the data
+        
         b = 0
         bl = 0
         t = 0
@@ -51,32 +54,68 @@ class ImageData(object):
         r = 0
         w = 0
 
-        for i in range(len(class_list)):
-            data = x_array[:,:,:,i]
-            img = Image.fromarray(data,mode)
+        for i in range(len(self.y_train_cl)):
+            data = self.x_train[:,:,:,i]
+            img = Image.fromarray(data,self.mode)
         
-            if class_list[i] == 0:
-                img.save("data/{}/0_building/building{}.png".format(folder,b))
+            if self.y_train_cl[i] == 0 and b < self.sample_size:
+                img.save("data/{}/x_train/0_building/building{}.png".format(self.mode,b))
                 b +=1
-            elif class_list[i] == 1:
-                img.save("data/{}/1_barren_land/barren{}.png".format(folder,bl))
+            elif self.y_train_cl[i] == 1 and bl < self.sample_size:
+                img.save("data/{}/x_train/1_barren_land/barren{}.png".format(self.mode,bl))
                 bl+=1
-            elif class_list[i] == 2:
-                img.save("data/{}/2_tree/tree{}.png".format(folder,t))
+            elif self.y_train_cl[i] == 2 and t < self.sample_size:
+                img.save("data/{}/x_train/2_tree/tree{}.png".format(self.mode,t))
                 t+=1
-            elif class_list[i] == 3:
-                img.save("data/{}/3_grassland/grassland{}.png".format(folder,g))
+            elif self.y_train_cl[i] == 3 and g < self.sample_size:
+                img.save("data/{}/x_train/3_grassland/grassland{}.png".format(self.mode,g))
                 g+=1
-            elif class_list[i] == 4:
-                img.save("data/{}/4_road/road{}.png".format(folder,r))
+            elif self.y_train_cl[i] == 4 and r < self.sample_size:
+                img.save("data/{}/x_train/4_road/road{}.png".format(self.mode,r))
                 r+=1
-            else:
-                img.save("data/{}/5_water/water{}.png".format(folder,w))
+            elif self.y_train_cl[i] == 5 and w < self.sample_size:
+                img.save("data/{}/x_train/5_water/water{}.png".format(self.mode,w))
                 w+=1
+            else:
+                pass
+
+    def save_test_png(self):
+        # Saves test set directories with images you can look at to check out the data
+        b = 0
+        bl = 0
+        t = 0
+        g = 0
+        r = 0
+        w = 0
+
+        for i in range(len(self.y_test_cl)):
+            data = self.x_test[:,:,:,i]
+            img = Image.fromarray(data,self.mode)
+        
+            if self.y_test_cl[i] == 0 and b < self.test_sample_size:
+                img.save("data/{}/x_test/0_building/building{}.png".format(self.mode,b))
+                b +=1
+            elif self.y_test_cl[i] == 1 and bl < self.test_sample_size:
+                img.save("data/{}/x_test/1_barren_land/barren{}.png".format(self.mode,bl))
+                bl+=1
+            elif self.y_test_cl[i] == 2 and t < self.test_sample_size:
+                img.save("data/{}/x_test/2_tree/tree{}.png".format(self.mode,t))
+                t+=1
+            elif self.y_test_cl[i] == 3 and g < self.test_sample_size:
+                img.save("data/{}/x_test/3_grassland/grassland{}.png".format(self.mode,g))
+                g+=1
+            elif self.y_test_cl[i] == 4 and r < self.test_sample_size:
+                img.save("data/{}/x_test/4_road/road{}.png".format(self.mode,r))
+                r+=1
+            elif self.y_test_cl[i] == 5 and w < self.test_sample_size:
+                img.save("data/{}/x_test/5_water/water{}.png".format(self.mode,w))
+                w+=1
+            else:
+                pass
 
     def class_lister(self, y_array):
         '''
-        Input: y_train, y_test, y_train_play, y_test_play
+        Input: y_train, y_test
         Returns: list of classifications (0-5) for each array in
                  the corresponding x array
         0 = building
@@ -96,24 +135,18 @@ class ImageData(object):
         return class_list
 
 if __name__ == "__main__":
+    # Be sure to set 'mode' parameter before running script
     mat = scipy.io.loadmat('data/sat-6-full.mat')
-    data = ImageData(mat)
-
-    # To save local training images:
-    folder = 'x_train_play'
-    x_array = data.x_train_play
-    class_list = data.y_train_play_cl
-
-    # # To save local test images:
-    # folder = 'x_test_play'
-    # x_array = data.x_test_play
-    # class_list = data.y_test_play_cl
+    data = ImageData(mat, mode='RGB')
 
     print("Saving arrays...")
     data.save_data()
     
-    print("Saving images...")
-    data.save_png(folder, x_array, class_list,mode='RGBA')
+    print("Saving training images...")
+    data.save_train_png()
+
+    print("Saving testing images...")
+    data.save_test_png()
 
     print("Done!")
 

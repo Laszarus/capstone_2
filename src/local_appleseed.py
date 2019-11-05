@@ -8,10 +8,13 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 
+from load_data import ImageData
+
 class LocalSeeds(object):
-    def __init__(self, play_data):
+    def __init__(self, mode):
         # load in test and train arrays saved as npz file
-        self.play_data = play_data
+        if mode == 'RGBA':
+        self.data = play_data
         
         # assign train and test sets from saved subsamples
         self.x_train_play = play_data['arr_0']
@@ -79,7 +82,7 @@ class LocalSeeds(object):
 if __name__ == "__main__":
 
     print('Creating class')
-    play_data = np.load('data/play_data.npz')
+    data = np.load('data/play_data.npz')
     seeds = LocalSeeds(play_data)
 
     print("Initializing parameters")
