@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ImageData(object):
-    def __init__(self, mat, sample_size=48, mode='RGBA'):
+    def __init__(self, mat, sample_size=48000, mode='RGBA'):
         # mode = 'RGBA' or 'RGB'
 
         # .mat loads in as a dictionary
