@@ -117,6 +117,16 @@ venv.bak/
 
 /data/**
 
+**/data/
+
+/data/
+
+data/**
+
+data/
+
+/data
+
 .ipynb_checkpoints/
 
 **/.json
