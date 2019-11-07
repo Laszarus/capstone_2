@@ -84,9 +84,10 @@ class Appleseed(object):
     def check(self):
         self.pred_probs = self.model.predict(self.x_test_sample)
         print('Probabilities: {}'.format(self.pred_probs))
-        self.guesses = np.argmax(self.model.predict(self.x_test_sample), axis=1)
-        print('Guesses: {}'.format(self.guesses))
-        self.actual = np.argmax(self.y_test_sample, axis=1)
+        self.y_pred = np.argmax(self.model.predict(self.x_test_sample), axis=1)
+        print('Guesses: {}'.format(self.y_pred))
+        self.y_true = np.argmax(self.y_test_sample, axis=1)
+        np.savez('data/{}/confusion'.format(self.mode), self.y_pred, self.y_true)
 
 if __name__ == "__main__":
     print('Creating class')
