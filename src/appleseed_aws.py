@@ -1,24 +1,30 @@
 import numpy as np
 import scipy.io
+import os
 
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import callbacks
+from tensorflow.keras.callbacks import ModelCheckpoint
+
+
 
 class Appleseed(object):
     def __init__(self, mode):
         # assign train and test sets from saved subsamples
         self.mode = mode
 
-        self.sample_data = np.load('data/{}/{}_aws_data.npz'.format(self.mode,self.mode))
+        self.aws_data = np.load('data/{}/{}_aws_data.npz'.format(self.mode,self.mode))
 
-        self.x_train_sample = self.sample_data['arr_0']
-        self.y_train_sample = self.sample_data['arr_1']
-        self.x_test_sample = self.sample_data['arr_2']
-        self.y_test_sample = self.sample_data['arr_3']
+        self.x_train_aws = self.aws_data['arr_0']
+        self.y_train_aws = self.aws_data['arr_1']
+        self.x_test_aws = self.aws_data['arr_2']
+        self.y_test_aws = self.aws_data['arr_3']
 
         # reshape to what Conv2D prefers--X: [samples(~6k), 28, 28, 4], y: [(samples(~1.5k), classes(6)]
         # self.x_train_sample = self.x_train_sample.reshape(self.x_train_sample.shape[3], self.x_train_sample.shape[0], 
@@ -29,8 +35,8 @@ class Appleseed(object):
         # self.y_test_sample = self.y_test_sample.T
 
         # .predict() doesn't like uint8
-        self.x_train_sample = self.x_train_sample.astype('float32') / 255. # data was uint8 [0-255]
-        self.x_test_sample = self.x_test_sample.astype('float32') / 255. # data was uint8 [0-255]
+        self.x_train_aws = self.x_train_aws.astype('float32') / 255. # data was uint8 [0-255]
+        self.x_test_aws = self.x_test_aws.astype('float32') / 255. # data was uint8 [0-255]
 
     def define_model(self, nb_filters, kernel_size, input_shape, pool_size):
         model = Sequential()
@@ -69,24 +75,27 @@ class Appleseed(object):
         self.model = model
 
     def fit_model(self):
-        self.model.fit(self.x_train_sample, 
-                       self.y_train_sample,
+        self.model.fit(self.x_train_aws, 
+                       self.y_train_aws,
                        batch_size=batch_size, 
                        epochs=nb_epoch,
                        verbose=1, 
-                       validation_data=(self.x_test_sample, self.y_test_sample))
+                       validation_data=(self.x_test_aws, self.y_test_aws))
     
     def evaluate_model(self):
-        score = self.model.evaluate(self.x_test_sample, self.y_test_sample, verbose=0)
+        score = self.model.evaluate(self.x_test_aws, self.y_test_aws, verbose=0)
         print('{} Test score:'.format(self.mode), score[0])
         print('{} Test accuracy:'.format(self.mode), score[1]) 
     
+    def save_model(self, file_path='data/appleseed_aws.h5'):
+        self.model.save(file_path)
+
     def check(self):
-        self.pred_probs = self.model.predict(self.x_test_sample)
+        self.pred_probs = self.model.predict(self.x_test_aws)
         print('Probabilities: {}'.format(self.pred_probs))
-        self.y_pred = np.argmax(self.model.predict(self.x_test_sample), axis=1)
+        self.y_pred = np.argmax(self.model.predict(self.x_test_aws), axis=1)
         print('Guesses: {}'.format(self.y_pred))
-        self.y_true = np.argmax(self.y_test_sample, axis=1)
+        self.y_true = np.argmax(self.y_test_aws, axis=1)
         np.savez('data/{}/aws_confusion.npz'.format(self.mode), self.y_pred, self.y_true)
     
     
@@ -116,10 +125,10 @@ def create_accuracy_loss(self, figloc):
 if __name__ == "__main__":
     print('Creating class')
     apples = Appleseed(mode='RGB')
-    print(apples.x_train_sample.shape)
-    print(apples.y_train_sample.shape)
-    print(apples.x_test_sample.shape)
-    print(apples.y_test_sample.shape)
+    print(apples.x_train_aws.shape)
+    print(apples.y_train_aws.shape)
+    print(apples.x_test_aws.shape)
+    print(apples.y_test_aws.shape)
 
     print("Initializing parameters")
     batch_size = 10  # number of training samples used at a time to update the weights
@@ -137,6 +146,9 @@ if __name__ == "__main__":
     print('Fitting model')
     apples.fit_model()
 
+    print('Saving model')
+    apples.save_model()
+    
     print("How'd we do?")
     apples.evaluate_model()
 

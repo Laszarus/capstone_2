@@ -81,6 +81,9 @@ class Appleseed(object):
         print('{} Test score:'.format(self.mode), score[0])
         print('{} Test accuracy:'.format(self.mode), score[1]) 
     
+    def save_model(self, file_path='data/appleseed.h5'):
+        self.model.save(file_path)
+    
     def check(self):
         self.pred_probs = self.model.predict(self.x_test_sample)
         print('Probabilities: {}'.format(self.pred_probs))
@@ -112,6 +115,9 @@ if __name__ == "__main__":
 
     print('Fitting model')
     apples.fit_model()
+
+    print('Saving model')
+    apples.save_model()
 
     print("How'd we do?")
     apples.evaluate_model()

@@ -4,6 +4,7 @@ import scipy.io
 from skimage import io
 from load_data import ImageData
 from PIL import Image
+from sklearn.metrics import confusion_matrix
 '''
 def class_distribution_bar_graph(y_list=data.y_train_play_cl):
     
@@ -89,8 +90,7 @@ def image_classification_samples(folder='x_train'):
     fig.savefig('images/img_class_samples_aws.png')
     plt.show()
 
-def plot_confusion_matrix(y_true, y_pred, 
-                          classes,
+def plot_confusion_matrix(y_true, y_pred,
                           normalize=False,
                           title='Dazed and Confusioned',
                           cmap=plt.cm.YlOrRd):
@@ -99,6 +99,7 @@ def plot_confusion_matrix(y_true, y_pred,
     cm = confusion_matrix(y_true, y_pred)
     print(cm)
 
+    classes = ['building', 'barren land', 'trees', 'grassland', 'road', 'water']
     fig, ax = plt.subplots(figsize=(8,8))
     im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
     ax.figure.colorbar(im, ax=ax)

@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ImageData(object):
-    def __init__(self, mat, sample_size=6000, mode='RGBA'):
+    def __init__(self, mat, sample_size=400, mode='RGBA'):
         # mode = 'RGBA' or 'RGB'
 
         # .mat loads in as a dictionary
@@ -170,17 +170,18 @@ class ImageData(object):
 
 if __name__ == "__main__":
     # Be sure to set 'mode' parameter before running script
-    mat = scipy.io.loadmat('data/sat-6-full.mat')
-    data = ImageData(mat, mode='RGBA')
+    seeds = ImageData(mat = scipy.io.loadmat('data/sat-6-full.mat'), 
+                     mode='RGB',
+                     sample_size = 400)
     
-    print("Saving {} training images...".format(data.mode))
-    data.save_train_png()
+    print("Saving {} training images...".format(seeds.mode))
+    seeds.save_train_png()
 
-    print("Saving {} testing images...".format(data.mode))
-    data.save_test_png()
+    print("Saving {} testing images...".format(seeds.mode))
+    seeds.save_test_png()
 
-    print("Saving {} arrays...".format(data.mode))
-    data.save_data()
+    print("Saving {} arrays...".format(seeds.mode))
+    seeds.save_data()
 
     print("Done!")
 
