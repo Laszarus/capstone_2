@@ -87,7 +87,7 @@ class Appleseed(object):
         self.y_pred = np.argmax(self.model.predict(self.x_test_sample), axis=1)
         print('Guesses: {}'.format(self.y_pred))
         self.y_true = np.argmax(self.y_test_sample, axis=1)
-        np.savez('data/{}/confusion'.format(self.mode), self.y_pred, self.y_true)
+        np.savez('data/{}/aws_confusion.npz'.format(self.mode), self.y_pred, self.y_true)
     
     
 def create_accuracy_loss(self, figloc):
