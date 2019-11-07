@@ -39,7 +39,7 @@ def class_distribution_bar_graph(y_list=data.y_train_play_cl):
     fig.tight_layout(pad=1)
     plt.show()
 '''
-def image_classification_samples(folder='x_train_play'):
+def image_classification_samples(folder='x_train'):
     '''
     Inputs: folder; String type. Folder name of which population you want
             to pull samples from.
@@ -52,40 +52,41 @@ def image_classification_samples(folder='x_train_play'):
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
         plt.grid(b=None, which='both')
-        building = io.imread('data/{}/0_building/building{}.png'.format(folder,np.random.randint(0,40)))
+        building = io.imread('data/{}/{}/0_building/building{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(building)
         fig.suptitle('building',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        barren = io.imread('data/{}/1_barren_land/barren{}.png'.format(folder,np.random.randint(0,40)))
+        barren = io.imread('data/{}/{}/1_barren_land/barren{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(barren)
         fig.suptitle('barren',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        tree = io.imread('data/{}/2_tree/tree{}.png'.format(folder,np.random.randint(0,40)))
+        tree = io.imread('data/{}/{}/2_tree/tree{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(tree)
         fig.suptitle('tree',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        grass = io.imread('data/{}/3_grassland/grassland{}.png'.format(folder,np.random.randint(0,40)))
+        grass = io.imread('data/{}/{}/3_grassland/grassland{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(grass)
         fig.suptitle('grass',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        road = io.imread('data/{}/4_road/road{}.png'.format(folder,np.random.randint(0,40)))
+        road = io.imread('data/{}/{}/4_road/road{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(road)
         fig.suptitle('road',x=0.03, y=.5)
 
     fig, ax = plt.subplots(1,6,figsize=(15,15))
     for i in cols: 
-        water = io.imread('data/{}/5_water/water{}.png'.format(folder,np.random.randint(0,40)))
+        water = io.imread('data/{}/{}/5_water/water{}.png'.format(mode,folder,np.random.randint(0,40)))
         ax[i].imshow(water)
         fig.suptitle('water',x=0.03, y=.5)
     
+    fig.savefig('images/img_class_samples_aws.png')
     plt.show()
 
 def plot_confusion_matrix(y_true, y_pred, 
@@ -124,7 +125,7 @@ def plot_confusion_matrix(y_true, y_pred,
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
     return ax
-
+    fig.savefig('images/confusion_aws.png')
     plt.show()
 
 def create_accuracy_loss(self, figloc):
@@ -176,7 +177,7 @@ def pred_building_road_true():
         img = Image.fromarray(data,'RGB')
         ax[i].imshow(img)
         fig.suptitle('Predicted building, actually road: 11/250',x=0.5, y=.4)
-        fig.savefig('images/pred_building_road_true.png')
+        fig.savefig('images/pred_building_road_true_aws.png')
 
 def pred_barren_grass_true():
     pred_1_list = []
@@ -203,7 +204,7 @@ def pred_barren_grass_true():
         img = Image.fromarray(data,'RGB')
         ax[i].imshow(img)
         fig.suptitle('Predicted barren, actually grass: 37/250',x=0.5, y=.4)
-        fig.savefig('images/pred_barren_grass_true.png')
+        fig.savefig('images/pred_barren_grass_true_aws.png')
 
 def pred_grass_tree_true():
     pred_3_list = []
@@ -230,7 +231,7 @@ def pred_grass_tree_true():
         img = Image.fromarray(data,'RGB')
         ax[i].imshow(img)
         fig.suptitle('Predicted grass, actually tree: 29/250',x=0.5, y=.4)
-        fig.savefig('images/pred_grass_tree_true.png')
+        fig.savefig('images/pred_grass_tree_true_aws.png')
 
 def pred_road_building_true():
     pred_4_list = []
@@ -257,7 +258,7 @@ def pred_road_building_true():
         img = Image.fromarray(data,'RGB')
         ax[i].imshow(img)
         fig.suptitle('Predicted grass, actually tree: 29/250',x=0.5, y=.4)
-        fig.savefig('images/pred_road_building_true.png')
+        fig.savefig('images/pred_road_building_true_aws.png')
 
 if __name__ == "__main__":   
     mat = scipy.io.loadmat('data/sat-6-full.mat')

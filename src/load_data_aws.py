@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ImageData(object):
-    def __init__(self, mat, sample_size=6000, mode='RGBA'):
+    def __init__(self, mat, sample_size=48000, mode='RGBA'):
         # mode = 'RGBA' or 'RGB'
 
         # .mat loads in as a dictionary
@@ -157,13 +157,13 @@ class ImageData(object):
     def save_data(self):
         if self.mode == 'RGBA':
             # create a local subset to load from when running model sript
-            np.savez('data/RGBA/RGBA_balanced_data', self.x_train_balanced, 
+            np.savez('data/RGBA/RGBA_aws_data', self.x_train_balanced, 
                                                      self.y_train_balanced,
                                                      self.x_test_balanced, 
                                                      self.y_test_balanced)
         elif self.mode == 'RGB':
             # create a local subset to load from when running model sript
-            np.savez('data/RGB/RGB_balanced_data', self.x_train_balanced, 
+            np.savez('data/RGB/RGB_aws_data', self.x_train_balanced, 
                                                    self.y_train_balanced,
                                                    self.x_test_balanced, 
                                                    self.y_test_balanced)
@@ -171,7 +171,7 @@ class ImageData(object):
 if __name__ == "__main__":
     # Be sure to set 'mode' parameter before running script
     mat = scipy.io.loadmat('data/sat-6-full.mat')
-    data = ImageData(mat, mode='RGBA')
+    data = ImageData(mat, mode='RGB')
     
     print("Saving {} training images...".format(data.mode))
     data.save_train_png()
@@ -183,6 +183,3 @@ if __name__ == "__main__":
     data.save_data()
 
     print("Done!")
-
-
-
