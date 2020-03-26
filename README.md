@@ -4,7 +4,7 @@
 ***
 ## Introduction
 ***
-In 2013, The City of Denver published an [assessment](https://www.denvergov.org/media/gis/DataCatalog/tree_canopy_assessment_2013/pdf/Tree_Canopy_Assessment_2013_Final_Report.pdf) of tree coverage throughout the metropolitan area in response to the air pollution, water, and energy demand issues arising from rapid urban growth. While the report enumerated the exact number of places available to plant a tree (8 million), it lacked a detailed visualization showing where these places are. This makes it more difficult for volunteer and environmental groups to take action without government involvement. In the spirit of more rapidly facilitating greener, cooler, healthier cities, this project seeks to harness the power of a convolutional neural network (CNN) to answer the question: **where can I plant some trees?**
+In 2013, The City of Denver published an [assessment](https://www.denvergov.org/media/gis/DataCatalog/tree_canopy_assessment_2013/pdf/Tree_Canopy_Assessment_2013_Final_Report.pdf) of tree coverage throughout the metropolitan area in response to the air pollution, water, and energy demand issues arising from rapid urban growth. While the report enumerated the exact number of places available to plant a tree (8 million), it lacked a useful visualization showing where these places are. This makes it more difficult for volunteer and environmental groups to take action without government involvement. In the spirit of more rapidly facilitating greener, cooler, healthier cities, this project seeks to harness the power of a convolutional neural network (CNN) to answer the question: **where can I plant some trees?**
 
 ## The Data
 ***
@@ -27,10 +27,7 @@ The 2013 report identified 7 different types of land cover, listed below. BSDV a
 
 The data are also conveniently split into a four-fifths training set (324,000) and a one-fifth test set (81,000). Each image is a 28x28-pixel tile extracted from a series of about 1500 6000x7000-pixel photos taken of land throughout the state of California. These aerial photos were taken at a 1 meter ground sampling distance, meaning each pixel represents 1 meter in real space. Each image has 4 layers--red, green, blue, and near-infrared (NIR)
 
-
 ![](images/grass.png) ![](images/example.png)
-
-
 
 ## EDA
 ***
@@ -42,7 +39,6 @@ Cool. You may notice these all have a white-ish filter on them. I attributed thi
 I also wanted to make sure I had enough images from each class to train on. It looks like the building and road classes are a little lacking compared to to others, but I figured I'd see how my model did first, then correct for undersampling if it seemed to be an issue.
 ![](images/class_distribution.png)
  
-
 ## CNN
 ***
 I started simple:
@@ -71,14 +67,14 @@ Optimizer: Adam
 Metrics: Accuracy
 ```
 
-Then I started the exhilarating process of tuning:
-![](images/tuning.png)
-*Takeaways:*
-- 35.1%--not bad! That's **twice as good** as random guessing
-- Changing sample size had greatest effect on accuracy
-- Accuracy doesn't seems to be affected by any one hyperparameter, except the optimizer...weird
+*Initial results:*
+
+After fiddling with hyperparameters, the highest accuracy I could achieve was **35.1%**. 
+Better then random guessing, but not ideal. 
 
 How is the model getting confused?
+
+Here we see the predicted probabilities of each tile being each of the 6 classifications:
 ```
 In [12]: seeds.model.predict(seeds.x_test_play)                                                                             
 Out[12]: 
@@ -96,36 +92,45 @@ array([[0.09050895, 0.15730289, 0.19790886, 0.1446698 , 0.03226209,
        [0.0446395 , 0.2253379 , 0.20204124, 0.19275795, 0.02545955,
         0.30976394]], dtype=float32)
 ```
-Looks...valid.
+
+And here the model's final classifications based on those probabilities:
 ```
 In [13]: np.argmax(seeds.model.predict(seeds.x_test_play), axis=1)                                                          
 Out[13]: array([5, 5, 5, ..., 5, 5, 5])
 ```
-Okay, a lot of water, but how much?
+Okay, a lot of guesses for water, but how much?
 ```
 In [15]: np.unique(np.argmax(seeds.model.predict(seeds.x_test_play), axis=1), return_counts=True)                           
 Out[15]: (array([1, 2, 5]), array([  16,    3, 1981]))
 ```
-To my dismay, I realized that my ray of light, my 35 percent accuracy, was an illusion. My model just classified every image as water, and it so happens that about 35 percent of the sample data is water. 
+To my dismay, I realized that even my humble 35% accuracy was an illusion. My model just classified every image as water, and it so happens that about 35 percent of the sample data is water. 
 
-## Diagnosis
-***
-- NIR? Not really
-    - ![](images/classes_RGB.png)
-- Not enough data? 
-    - SMOTE
-    - Image generator
-- Model is too simple?
-
-
+![](images/wrong2.jpg)
 
 ## Next steps
 ***
-- Diagnose classification issue
-    - Try starting with binary classification
-- Scale up to AWS (could help with undersampling)
-- Research segmentation visualiztion methods
-- Mining usable data outside NAIP imagery (Google Earth?)
+1. Restructure data
+    - Try starting with binary classification (i.e. plantable/not plantable) 
+        - Because pre-labeled classes will be mixed, it would be best to use the [SAT-4](https://csc.lsu.edu/~saikat/deepsat/) dataset, since it contains ~100k more images than SAT-6.
+    - Ensure classes are [balanced](https://towardsdatascience.com/handling-imbalanced-datasets-in-deep-learning-f48407a0e758)
+        - Weight balancing
+        - Synthestic Minority Oversampling Technique ([SMOTE](https://medium.com/analytics-vidhya/balance-your-data-using-smote-98e4d79fcddb))
+            - Image augmentation/generation
+        - Random Oversampling Examples ([ROSE](https://www.analyticsvidhya.com/blog/2016/03/practical-guide-deal-imbalanced-classification-problems/))
+    - [Augment](https://towardsdatascience.com/image-augmentation-using-python-numpy-opencv-and-skimage-ef027e9898da) images to maximize applicability to images outside SAT datasets
+
+2. Restructure model
+    - Research best practices (and justifications) for aerial image [classification model architecture](https://towardsdatascience.com/semantic-segmentation-of-aerial-images-using-deep-learning-90fdf4ad780)
+    - Research [hyperparameter optimization techniques](https://towardsdatascience.com/understanding-hyperparameters-optimization-in-deep-learning-models-concepts-and-tools-357002a3338a)) 
+
+3. Retrain model with complete dataset on AWS
+
+4. Use model with other open source aerial imagery to test applicability
+
+5. Create classification visualization tool
+
+6. Develop Flask app that allows user to upload an image, and returns a color-coded tree-planting map
+
 
 
 
