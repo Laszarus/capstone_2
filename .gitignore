@@ -115,9 +115,14 @@ venv.bak/
 
 **/.DS_Store
 
-data/
+# Too big stuff
+data/**
 
-images/
+images/**
+
+.png
+
+.tif
 
 .ipynb_checkpoints/
 
