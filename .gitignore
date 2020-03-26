@@ -115,17 +115,9 @@ venv.bak/
 
 **/.DS_Store
 
-/data/**
-
-**/data/
-
-/data/
-
-data/**
-
 data/
 
-/data
+images/
 
 .ipynb_checkpoints/
 
