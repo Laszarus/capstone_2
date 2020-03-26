@@ -118,8 +118,6 @@ venv.bak/
 # Too big stuff
 data/**
 
-images/**
-
 .png
 
 .tif
