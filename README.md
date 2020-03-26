@@ -111,7 +111,7 @@ To my dismay, I realized that even my humble 35% accuracy was an illusion. My mo
 ***
 1. Restructure data
     - Try starting with binary classification (i.e. plantable/not plantable) 
-        - Because pre-labeled classes will be mixed, it would be best to use the [SAT-4](https://csc.lsu.edu/~saikat/deepsat/) dataset, since it contains ~100k more images than SAT-6.
+        - Because pre-labeled classes will be mixed, it would be best to use the [SAT-4](https://csc.lsu.edu/~saikat/deepsat/) dataset, since it contains ~100k more images than SAT-6
     - Ensure classes are [balanced](https://towardsdatascience.com/handling-imbalanced-datasets-in-deep-learning-f48407a0e758)
         - Weight balancing
         - Synthestic Minority Oversampling Technique ([SMOTE](https://medium.com/analytics-vidhya/balance-your-data-using-smote-98e4d79fcddb))
